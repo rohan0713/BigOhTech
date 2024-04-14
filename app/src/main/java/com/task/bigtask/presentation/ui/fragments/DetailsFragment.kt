@@ -15,12 +15,18 @@ import com.task.bigtask.databinding.FragmentDetailsBinding
 import com.task.bigtask.domain.repositories.ContentRepository
 import com.task.bigtask.presentation.ui.viewmodels.ContentViewModel
 import com.task.bigtask.presentation.ui.viewmodels.ViewModelProviderFactory
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class DetailsFragment : Fragment() {
 
     private lateinit var binding: FragmentDetailsBinding
     private val args : DetailsFragmentArgs by navArgs()
     private lateinit var viewModel: ContentViewModel
+
+    @Inject
+    lateinit var repository: ContentRepository
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,14 +35,16 @@ class DetailsFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentDetailsBinding.inflate(layoutInflater, container, false)
         val id = args.photoID
-        val repository = ContentRepository()
-        val viewModelProvider = ViewModelProviderFactory(repository)
+        binding.progressBar.animate()
 
+        val viewModelProvider = ViewModelProviderFactory(repository)
         viewModel = ViewModelProvider(this, viewModelProvider)[ContentViewModel::class.java]
         viewModel.getDetails(id)
 
         viewModel.details.observe(viewLifecycleOwner, Observer {
             it.let {
+                binding.progressBar.visibility = View.GONE
+                binding.constraintLayout.visibility = View.VISIBLE
                 Glide.with(binding.root).load(it.download_url).into(binding.ivContent)
                 binding.tvAuthor.text = "Author : ${it.author}"
                 binding.tvLink.text = it.url

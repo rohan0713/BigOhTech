@@ -7,11 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.task.bigtask.data.models.ContentApi
 import com.task.bigtask.data.models.ContentApiItem
 import com.task.bigtask.domain.repositories.ContentRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ContentViewModel(
-    private val repository: ContentRepository
+@HiltViewModel
+class ContentViewModel @Inject constructor(
+    val repository: ContentRepository
 ) : ViewModel() {
 
     private val _photos : MutableLiveData<ContentApi> = MutableLiveData()

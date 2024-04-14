@@ -13,11 +13,17 @@ import com.task.bigtask.domain.repositories.ContentRepository
 import com.task.bigtask.presentation.ui.adapters.ContentAdapter
 import com.task.bigtask.presentation.ui.viewmodels.ContentViewModel
 import com.task.bigtask.presentation.ui.viewmodels.ViewModelProviderFactory
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ImagesFragment : Fragment() {
 
     private lateinit var binding: FragmentImagesBinding
     private lateinit var viewModel: ContentViewModel
+
+    @Inject
+    lateinit var repository: ContentRepository
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,10 +33,10 @@ class ImagesFragment : Fragment() {
         binding = FragmentImagesBinding.inflate(layoutInflater, container, false)
         binding.rvImages.layoutManager = LinearLayoutManager(binding.root.context)
 
-        val repository = ContentRepository()
         val viewModelProvider = ViewModelProviderFactory(repository)
 
         viewModel = ViewModelProvider(this, viewModelProvider)[ContentViewModel::class.java]
+
         viewModel.photos.observe(viewLifecycleOwner, Observer {
             binding.rvImages.adapter = ContentAdapter(it)
         })
