@@ -7,13 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavArgs
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
-import com.task.bigtask.R
 import com.task.bigtask.databinding.FragmentDetailsBinding
-import com.task.bigtask.domain.repositories.ContentRepository
-import com.task.bigtask.presentation.ui.viewmodels.ContentViewModel
+import com.task.bigtask.domain.repositories.FeedRepository
+import com.task.bigtask.presentation.ui.viewmodels.FeedViewModel
 import com.task.bigtask.presentation.ui.viewmodels.ViewModelProviderFactory
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -23,10 +21,10 @@ class DetailsFragment : Fragment() {
 
     private lateinit var binding: FragmentDetailsBinding
     private val args : DetailsFragmentArgs by navArgs()
-    private lateinit var viewModel: ContentViewModel
+    private lateinit var viewModel: FeedViewModel
 
     @Inject
-    lateinit var repository: ContentRepository
+    lateinit var repository : FeedRepository
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +36,7 @@ class DetailsFragment : Fragment() {
         binding.progressBar.animate()
 
         val viewModelProvider = ViewModelProviderFactory(repository)
-        viewModel = ViewModelProvider(this, viewModelProvider)[ContentViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelProvider)[FeedViewModel::class.java]
         viewModel.getDetails(id)
 
         viewModel.details.observe(viewLifecycleOwner, Observer {

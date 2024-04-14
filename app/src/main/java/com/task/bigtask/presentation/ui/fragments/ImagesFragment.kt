@@ -8,10 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.task.bigtask.data.paging.LoadAdapter
 import com.task.bigtask.databinding.FragmentImagesBinding
-import com.task.bigtask.domain.repositories.ContentRepository
+import com.task.bigtask.domain.repositories.FeedRepository
 import com.task.bigtask.presentation.ui.adapters.ContentAdapter
 import com.task.bigtask.presentation.ui.viewmodels.ContentViewModel
+import com.task.bigtask.presentation.ui.viewmodels.FeedViewModel
 import com.task.bigtask.presentation.ui.viewmodels.ViewModelProviderFactory
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -20,10 +22,12 @@ import javax.inject.Inject
 class ImagesFragment : Fragment() {
 
     private lateinit var binding: FragmentImagesBinding
-    private lateinit var viewModel: ContentViewModel
+
+    private lateinit var viewModel: FeedViewModel
+    private lateinit var adapter: ContentAdapter
 
     @Inject
-    lateinit var repository: ContentRepository
+    lateinit var repository: FeedRepository
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,13 +38,16 @@ class ImagesFragment : Fragment() {
         binding.rvImages.layoutManager = LinearLayoutManager(binding.root.context)
 
         val viewModelProvider = ViewModelProviderFactory(repository)
+        viewModel = ViewModelProvider(this, viewModelProvider)[FeedViewModel::class.java]
+        adapter = ContentAdapter()
+        binding.rvImages.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = LoadAdapter(),
+            footer = LoadAdapter()
+        )
 
-        viewModel = ViewModelProvider(this, viewModelProvider)[ContentViewModel::class.java]
-
-        viewModel.photos.observe(viewLifecycleOwner, Observer {
-            binding.rvImages.adapter = ContentAdapter(it)
+        viewModel.list.observe(viewLifecycleOwner, Observer {
+            adapter.submitData(lifecycle, it)
         })
-
         return binding.root
     }
 }

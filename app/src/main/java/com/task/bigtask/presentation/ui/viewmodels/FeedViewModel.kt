@@ -4,21 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.task.bigtask.data.models.ContentApi
+import androidx.paging.cachedIn
 import com.task.bigtask.data.models.ContentApiItem
-import com.task.bigtask.domain.repositories.ContentRepository
+import com.task.bigtask.domain.repositories.FeedRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ContentViewModel @Inject constructor(
-    private val repository: ContentRepository
-) : ViewModel() {
+class FeedViewModel @Inject constructor(private val repository: FeedRepository) : ViewModel() {
 
-    private val _photos : MutableLiveData<ContentApi> = MutableLiveData()
-    val photos : LiveData<ContentApi> = _photos
+    val list = repository.getPhotos().cachedIn(viewModelScope)
 
     private val _details : MutableLiveData<ContentApiItem> = MutableLiveData()
     val details : LiveData<ContentApiItem> = _details
